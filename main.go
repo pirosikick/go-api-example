@@ -1,21 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"github.com/codegangsta/negroni"
+	"html/template"
+	"log"
 	"net/http"
+	"path/filepath"
+	"sync"
 )
 
-func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "Welcome to the home page!")
-	})
-	mux.HandleFunc("/user", func(w http.ResponseWriter, req *http.Request) {
-		fmt.Fprintf(w, "Welcome to the user page!")
-	})
+type templateHandler struct {
+	once     sync.Once
+	filename string
+	templ    *template.Template
+}
 
-	n := negroni.Classic()
-	n.UseHandler(mux)
-	n.Run(":3000")
+func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	t.once.Do(func() {
+		t.templ =
+			template.Must(template.ParseFiles(filepath.Join("templates", t.filename)))
+	})
+	t.templ.Execute(w, nil)
+}
+
+func main() {
+	http.Handle("/", &templateHandler{filename: "chat.html"})
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
 }
