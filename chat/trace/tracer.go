@@ -6,18 +6,17 @@ import (
 	"io"
 )
 
-type Tracer interface {
-	Trace(...interface{})
-}
-
-type tracer struct {
+type Tracer struct {
 	out io.Writer
 }
 
-func (t *tracer) Trace(a ...interface{}) {
+func (t *Tracer) Trace(a ...interface{}) {
+	if t == nil || t.out == nil {
+		return
+	}
 	fmt.Fprintln(t.out, a...)
 }
 
-func New(w io.Writer) Tracer {
-	return &tracer{out: w}
+func New(w io.Writer) *Tracer {
+	return &Tracer{out: w}
 }
