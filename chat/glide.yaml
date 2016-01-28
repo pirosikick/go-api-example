@@ -1,4 +1,5 @@
 package: main
 import:
-    - package: github.com/codegangsta/negroni
-    - package: github.com/gorilla/websocket
+- package: github.com/codegangsta/negroni
+- package: github.com/gorilla/websocket
+- package: github.com/stretchr/gomniauth
