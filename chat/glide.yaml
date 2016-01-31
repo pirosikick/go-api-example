@@ -3,3 +3,12 @@ import:
 - package: github.com/codegangsta/negroni
 - package: github.com/gorilla/websocket
 - package: github.com/stretchr/gomniauth
+- package: github.com/stretchr/codecs
+- package: github.com/clbanning/x2j
+- package: github.com/stretchr/objx
+- package: github.com/stretchr/signature
+- package: github.com/stretchr/stew
+- package: github.com/stretchr/tracer
+- package: github.com/ugorji/go
+  subpackages:
+  - /codec
