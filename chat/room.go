@@ -19,15 +19,17 @@ type room struct {
 	join    chan *client
 	leave   chan *client
 	clients map[*client]bool
+	avatar  Avatar
 	tracer  *trace.Tracer
 }
 
-func newRoom() *room {
+func newRoom(avatar Avatar) *room {
 	return &room{
 		forward: make(chan *message),
 		join:    make(chan *client),
 		leave:   make(chan *client),
 		clients: make(map[*client]bool),
+		avatar:  avatar,
 		//tracer:  trace.New(os.Stdout),
 	}
 }
