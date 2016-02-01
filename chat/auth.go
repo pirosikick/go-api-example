@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/objx"
+	"io"
 	"log"
 	"net/http"
 	"strings"
@@ -23,6 +25,8 @@ func (h *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		h.next.ServeHTTP(w, r)
 	}
 }
+
+// MustAuth ... The http.Handler decorator to authrize user
 func MustAuth(handler http.Handler) http.Handler {
 	return &authHandler{next: handler}
 }
@@ -37,11 +41,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatalln("認証プロバイダーの取得に失敗しました：", provider, "-", err)
 		}
-		loginUrl, err := provider.GetBeginAuthURL(nil, nil)
+		loginURL, err := provider.GetBeginAuthURL(nil, nil)
 		if err != nil {
 			log.Fatalln("error was occured when calling GetBeginAuthURL:", provider, "-", err)
 		}
-		w.Header().Set("Location", loginUrl)
+		w.Header().Set("Location", loginURL)
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	case "callback":
 		provider, err := gomniauth.Provider(provider)
@@ -56,7 +60,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Fatalln("ユーザの取得に失敗しました", provider, "-", err)
 		}
+		m := md5.New()
+		io.WriteString(m, strings.ToLower(user.Name()))
+		userID := fmt.Sprintf("%x", m.Sum(nil))
 		authCookieValue := objx.New(map[string]interface{}{
+			"userid":     userID,
 			"name":       user.Name(),
 			"avatar_url": user.AvatarURL(),
 			"email":      user.Email(),

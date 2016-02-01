@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <title>アップロード</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>画像のアップロード</h1>
+      </div>
+      <form action="/uploader" role="form" enctype="multipart/form-data" method="POST">
+        <input type="hidden" name="userid" value="{{.UserData.userid}}">
+        <div class="form-group">
+          <label for="message">ファイルを選択</label>
+          <input type="file" name="avatarFile">
+        </div>
+        <input type="submit" value="アップロード" class="btn">
+      </form>
+    </div>
+  </body>
+</html>
