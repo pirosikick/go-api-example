@@ -2,23 +2,34 @@ package main
 
 import (
 	"errors"
+	"path/filepath"
 )
 
 var ErrNoAvatarURL = errors.New("chat: アバターのURLを取得できません。")
 
 type Avatar interface {
-	AvatarURL(c *client) (string, error)
+	AvatarURL(ChatUser) (string, error)
+}
+
+type TryAvatars []Avatar
+
+func (a TryAvatars) AvatarURL(u ChatUser) (string, error) {
+	for _, avatar := range a {
+		if url, err := avatar.AvatarURL(u); err == nil {
+			return url, nil
+		}
+	}
+	return "", ErrNoAvatarURL
 }
 
 type AuthAvatar struct{}
 
 var UseAuthAvatar AuthAvatar
 
-func (_ AuthAvatar) AvatarURL(c *client) (string, error) {
-	if url, ok := c.userData["avatar_url"]; ok {
-		if urlStr, ok := url.(string); ok {
-			return urlStr, nil
-		}
+func (AuthAvatar) AvatarURL(u ChatUser) (string, error) {
+	url := u.AvatarURL()
+	if url != "" {
+		return url, nil
 	}
 	return "", ErrNoAvatarURL
 }
@@ -29,11 +40,18 @@ type GravatarAvatar struct{}
 var UseGravatar GravatarAvatar
 
 // AvatarURL ... return avatar url of the user
-func (GravatarAvatar) AvatarURL(c *client) (string, error) {
-	if userid, ok := c.userData["userid"]; ok {
-		if useridStr, ok := userid.(string); ok {
-			return "//www.gravatar.com/avatar/" + useridStr, nil
-		}
+func (GravatarAvatar) AvatarURL(u ChatUser) (string, error) {
+	return "//www.gravatar.com/avatar/" + u.UniqueID(), nil
+}
+
+type FileSystemAvatar struct{}
+
+var UseFileSystemAvatar FileSystemAvatar
+
+func (FileSystemAvatar) AvatarURL(u ChatUser) (string, error) {
+	matches, err := filepath.Glob(filepath.Join("avatars", u.UniqueID()+"*"))
+	if err != nil || len(matches) == 0 {
+		return "", ErrNoAvatarURL
 	}
-	return "", ErrNoAvatarURL
+	return "/" + matches[0], nil
 }

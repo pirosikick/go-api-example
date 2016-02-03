@@ -12,3 +12,6 @@ import:
 - package: github.com/ugorji/go
   subpackages:
   - /codec
+- package: github.com/stretchr/testify
+  subpackages:
+  - /mock
