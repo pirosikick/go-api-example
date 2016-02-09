@@ -1,0 +1,9 @@
+package: main
+import:
+- package: github.com/bitly/go-nsq
+- package: gopkg.in/mgo.v2
+- package: github.com/joeshaw/envdecode
+- package: github.com/garyburd/go-oauth
+  subpackages:
+  - /oauth
+- package: github.com/mreiferson/go-snappystream
