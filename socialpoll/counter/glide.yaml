@@ -1,0 +1,6 @@
+package: main
+import:
+- package: gopkg.in/mgo.v2
+- package: github.com/nsqio/go-nsq
+- package: labix.org/v2/mgo
+- package: github.com/mreiferson/go-snappystream

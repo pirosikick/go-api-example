@@ -1,0 +1,4 @@
+db/
+nsqd.*.dat
+vendor/
+counter
